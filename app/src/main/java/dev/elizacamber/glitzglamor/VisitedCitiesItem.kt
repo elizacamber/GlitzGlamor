@@ -1,6 +1,7 @@
 package dev.elizacamber.glitzglamor
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -17,11 +18,12 @@ import androidx.compose.ui.unit.dp
 import dev.elizacamber.glitzglamor.ui.theme.GlitzGlamorTheme
 
 @Composable
-fun VisitedCitiesItem(city: City) {
+fun VisitedCitiesItem(city: City, onClick: (() -> Unit)) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp, 14.dp),
+            .padding(8.dp, 14.dp)
+            .clickable { onClick.invoke() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         FlagIcon(res = getFlagForCountry(city.country))
@@ -51,13 +53,14 @@ fun FlagIcon(res: Int?) {
 fun TimesVisitedText(visits: Int) {
     Text(
         text = stringResource(id = R.string.title_times_visited, visits),
-        style= MaterialTheme.typography.bodySmall)
+        style = MaterialTheme.typography.bodySmall
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ItemPreview() {
     GlitzGlamorTheme {
-        VisitedCitiesItem(City("Chicago", "United States of America", 1))
+        VisitedCitiesItem(City("Chicago", "United States of America", 1), onClick = {})
     }
 }
