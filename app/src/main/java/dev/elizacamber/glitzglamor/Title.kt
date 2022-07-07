@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Title() {
+fun Title(title: String) {
     val animState = remember { mutableStateOf(false) }
     val transitionData = updateTitleTransitionData(animState)
 
@@ -34,7 +34,7 @@ fun Title() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(R.string.app_title),
+            text = title,
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onPrimary,
@@ -67,5 +67,5 @@ private fun updateTitleTransitionData(isAnimated: MutableState<Boolean>): TitleT
 @Composable
 @Preview
 fun TitlePreview() {
-    Title()
+    Title(stringResource(id = R.string.app_title))
 }

@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
 
                     Scaffold(
                         floatingActionButton = {
-                            if(navBackStackEntry?.destination?.route == "list") {
+                            if (navBackStackEntry?.destination?.route == "list") {
                                 FloatingActionButton(onClick = { navController.navigate("new") }) {
                                     Icon(Icons.Default.Add, "Add new city to the list")
                                 }
@@ -44,12 +44,19 @@ class MainActivity : ComponentActivity() {
                     ) {
                         NavHost(navController = navController, startDestination = "list") {
                             composable("list") { VisitedCitiesList(dummyCityList, navController) }
-                            composable("details/{cityName}",
-                                arguments = listOf(navArgument("cityName") {
+                            composable(
+                                "details/{country}/{cityName}",
+                                arguments = listOf(navArgument("country") {
+                                    type = NavType.StringType
+                                }, navArgument("cityName") {
                                     type = NavType.StringType
                                 })
                             ) { backStackEntry ->
-                                VisitedCityDetails(navController, backStackEntry.arguments?.getString("cityName"))
+                                VisitedCityDetails(
+                                    navController,
+                                    backStackEntry.arguments?.getString("country"),
+                                    backStackEntry.arguments?.getString("cityName")
+                                )
                             }
                             composable("new") { AddNew(navController) }
                         }
