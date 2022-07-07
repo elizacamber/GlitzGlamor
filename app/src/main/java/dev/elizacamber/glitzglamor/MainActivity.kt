@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(
                                 "new",
-                                enterTransition = { _, _ ->
+                                enterTransition = {
                                     slideIntoContainer(
                                         AnimatedContentScope.SlideDirection.Left,
                                         tween(400)
