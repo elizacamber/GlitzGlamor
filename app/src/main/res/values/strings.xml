@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Glitz&amp;Glamor</string>
+    <string name="title_times_visited">Times visited: %d</string>
+</resources>
