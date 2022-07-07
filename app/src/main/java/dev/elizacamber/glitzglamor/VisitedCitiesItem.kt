@@ -2,8 +2,10 @@ package dev.elizacamber.glitzglamor
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,11 +22,20 @@ import dev.elizacamber.glitzglamor.ui.theme.GlitzGlamorTheme
 
 @Composable
 fun VisitedCitiesItem(city: City, onClick: (() -> Unit)) {
+    val configuration = LocalConfiguration.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp, 14.dp)
-            .clickable { onClick.invoke() },
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = rememberRipple(
+                    bounded = true, // restrict ripple to this view only
+                    color = MaterialTheme.colorScheme.tertiary
+                ),
+                onClick = { }
+            )
+            .padding(8.dp, 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         FlagIcon(res = getFlagForCountry(city.country))
