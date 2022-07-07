@@ -19,7 +19,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import dev.elizacamber.glitzglamor.ui.theme.AddNew
 import dev.elizacamber.glitzglamor.ui.theme.GlitzGlamorTheme
 
 class MainActivity : ComponentActivity() {

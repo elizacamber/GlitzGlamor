@@ -1,4 +1,4 @@
-package dev.elizacamber.glitzglamor.ui.theme
+package dev.elizacamber.glitzglamor
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
