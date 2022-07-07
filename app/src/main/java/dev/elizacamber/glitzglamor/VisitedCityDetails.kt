@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -19,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.delay
 
 @Composable
 fun VisitedCityDetails(navController: NavHostController, country: String?, city: String?) {
@@ -27,6 +29,7 @@ fun VisitedCityDetails(navController: NavHostController, country: String?, city:
 
     Column(Modifier.fillMaxSize()) {
         DetailsBanner(country = country, city = city)
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -34,6 +37,11 @@ fun VisitedCityDetails(navController: NavHostController, country: String?, city:
 fun DetailsBanner(country: String, city: String) {
     val visible = remember { mutableStateOf(false) }
     val density = LocalDensity.current
+
+    LaunchedEffect(visible) {
+        delay(500)
+        visible.value = true
+    }
 
     Box(
         modifier = Modifier
