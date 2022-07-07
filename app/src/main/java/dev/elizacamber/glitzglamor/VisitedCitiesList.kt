@@ -1,8 +1,8 @@
 package dev.elizacamber.glitzglamor
 
-import androidx.compose.animation.Animatable
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,7 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,29 +39,34 @@ fun VisitedCitiesList(list: List<City>, navController: NavHostController) {
     }
 }
 
+enum class TitleAnimationState {
+    Regular,
+    Animated
+}
+
 @Composable
 fun Title() {
-    val scaled = remember { mutableStateOf(false) }
-    val scale = animateFloatAsState(if (scaled.value) 1.5f else 1f)
-
     val isAnimated = remember { mutableStateOf(false) }
+
+    val transition = updateTransition(isAnimated, label = "title_animation")
+
+    val scale = transition.animateFloat(label = "title_scale") {
+        if (it.value) 1.5f else 1f
+    }
     val bgColor1 = MaterialTheme.colorScheme.primary
     val bgColor2 = MaterialTheme.colorScheme.secondary
-    val bgColor = remember { Animatable(bgColor1) }
-
-    LaunchedEffect(isAnimated) {
-        bgColor.animateTo(
-            if (isAnimated.value) bgColor1 else bgColor2,
-            animationSpec = tween(2000)
-        )
+    val bgColor by transition.animateColor(label = "") { state ->
+        if (state.value) bgColor2 else bgColor1
     }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(128.dp)
-            .background(bgColor.value)
-            .clickable { scaled.value = !scaled.value },
+            .background(bgColor)
+            .clickable {
+                isAnimated.value = !isAnimated.value
+            },
         contentAlignment = Alignment.Center
     ) {
         Text(
