@@ -32,7 +32,6 @@ fun VisitedCityDetails(navController: NavHostController, country: String?, city:
 
 @Composable
 fun DetailsBanner(country: String, city: String) {
-
     val visible = remember { mutableStateOf(false) }
     val density = LocalDensity.current
 
