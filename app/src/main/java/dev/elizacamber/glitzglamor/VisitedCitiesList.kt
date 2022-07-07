@@ -1,8 +1,7 @@
 package dev.elizacamber.glitzglamor
 
 import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,17 +44,31 @@ enum class TitleAnimationState {
 
 @Composable
 fun Title() {
-    val isAnimated = remember { mutableStateOf(false) }
+    val currentAnimState = remember { MutableTransitionState(TitleAnimationState.Regular) }
+    val transition = updateTransition(currentAnimState, label = "title_animation")
 
-    val transition = updateTransition(isAnimated, label = "title_animation")
-
-    val scale = transition.animateFloat(label = "title_scale") {
-        if (it.value) 1.5f else 1f
+    val scale = transition.animateFloat(label = "title_scale") { state ->
+        when (state) {
+            TitleAnimationState.Regular -> 1f
+            TitleAnimationState.Animated -> 1.5f
+        }
     }
     val bgColor1 = MaterialTheme.colorScheme.primary
     val bgColor2 = MaterialTheme.colorScheme.secondary
-    val bgColor by transition.animateColor(label = "") { state ->
-        if (state.value) bgColor2 else bgColor1
+    val bgColor by transition.animateColor(
+        transitionSpec = {
+            when {
+                TitleAnimationState.Regular isTransitioningTo TitleAnimationState.Animated ->
+                    spring(stiffness = 50f)
+                else ->
+                    tween(durationMillis = 500)
+            }
+        }, label = ""
+    ) { state ->
+        when (state) {
+            TitleAnimationState.Regular -> bgColor1
+            TitleAnimationState.Animated -> bgColor2
+        }
     }
 
     Box(
@@ -65,7 +77,9 @@ fun Title() {
             .height(128.dp)
             .background(bgColor)
             .clickable {
-                isAnimated.value = !isAnimated.value
+                if (currentAnimState.currentState == TitleAnimationState.Regular) currentAnimState.targetState =
+                    TitleAnimationState.Animated else currentAnimState.targetState =
+                    TitleAnimationState.Regular
             },
         contentAlignment = Alignment.Center
     ) {
