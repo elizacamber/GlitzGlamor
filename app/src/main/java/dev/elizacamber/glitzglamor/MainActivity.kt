@@ -69,8 +69,14 @@ class MainActivity : ComponentActivity() {
                                 "new",
                                 enterTransition = {
                                     slideIntoContainer(
-                                        AnimatedContentScope.SlideDirection.Left,
-                                        tween(400)
+                                        AnimatedContentScope.SlideDirection.Up,
+                                        tween(700)
+                                    )
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(
+                                        AnimatedContentScope.SlideDirection.Down,
+                                        tween(700)
                                     )
                                 }
                             ) { AddNew(navController) }
