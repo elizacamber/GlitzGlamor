@@ -1,15 +1,15 @@
 package dev.elizacamber.glitzglamor
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -22,14 +22,43 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 
+enum class DetailsFABState {
+    Edit,
+    Done
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VisitedCityDetails(navController: NavHostController, country: String?, city: String?) {
     requireNotNull(country)
     requireNotNull(city)
 
-    Column(Modifier.fillMaxSize()) {
-        DetailsBanner(country = country, city = city)
-        Spacer(modifier = Modifier.height(16.dp))
+    var fabState by remember { mutableStateOf(DetailsFABState.Edit) }
+
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                fabState =
+                    if (fabState == DetailsFABState.Edit) DetailsFABState.Done else DetailsFABState.Edit
+            }) {
+                Icon(
+                    if (fabState == DetailsFABState.Done) Icons.Default.Edit else Icons.Default.Done,
+                    "Edit city details"
+                )
+            }
+        }
+    ) {
+        Column(Modifier.fillMaxSize()) {
+            DetailsBanner(country = country, city = city)
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(Modifier.padding(16.dp)) {
+                Text(text = "Times visited: 2")
+                Text(text = "Number of total days: 170")
+                Text(text = "Last day visited: 27/05/2022")
+                //Text(text = "Trips: 1. 10/09/2021 - 19/09/2021 2. 04/01/2022 - 27/05/2022")
+            }
+        }
     }
 }
 

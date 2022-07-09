@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.elizacamber.glitzglamor.database.City
 import dev.elizacamber.glitzglamor.ui.theme.GlitzGlamorTheme
 
 @Composable
@@ -70,6 +71,6 @@ fun TimesVisitedText(visits: Int) {
 @Composable
 fun ItemPreview() {
     GlitzGlamorTheme {
-        VisitedCitiesItem(City("Chicago", "United States of America", 1), onClick = {})
+        VisitedCitiesItem(City(0, "Chicago", "United States of America", 1), onClick = {})
     }
 }

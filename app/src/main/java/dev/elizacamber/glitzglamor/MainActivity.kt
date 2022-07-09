@@ -22,6 +22,7 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import dev.elizacamber.glitzglamor.database.dummyCityList
 import dev.elizacamber.glitzglamor.ui.theme.GlitzGlamorTheme
 
 
