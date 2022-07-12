@@ -1,8 +1,19 @@
-package dev.elizacamber.glitzglamor
+package dev.elizacamber.glitzglamor.data
 
-fun getFlagForCountry(country: String) = countryList[country]
+import dev.elizacamber.glitzglamor.R
 
-val countryList = hashMapOf(
+data class Country(val name: String, val flag: Int)
+
+private val countryList = mutableListOf<Country>()
+
+fun createCountryList() = _countryList.forEach {
+    val country = Country(it.key, it.value)
+    countryList.add(country)
+}
+
+fun getCountryList() = countryList.toList().sortedBy { it.name }
+
+private val _countryList = hashMapOf(
     "Ascension Island" to R.drawable.ac,
     "Andorra" to R.drawable.ad,
     "United Arab Emirates" to R.drawable.ae,

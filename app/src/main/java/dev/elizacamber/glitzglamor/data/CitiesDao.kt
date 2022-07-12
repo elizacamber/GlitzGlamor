@@ -1,4 +1,4 @@
-package dev.elizacamber.glitzglamor.database
+package dev.elizacamber.glitzglamor.data
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
@@ -8,8 +8,14 @@ interface CitiesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(city: City): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(visit: Visit): Long
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun update(city: City): Int
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    fun update(visit: Visit): Int
 
     @Query("SELECT * FROM cities_table")
     fun getAllCities(): Flow<List<City>>
@@ -20,7 +26,7 @@ interface CitiesDao {
 
     @Transaction
     @Query("SELECT * FROM cities_table WHERE cityId = :key")
-    fun getCityWithVisitDetails(key: Long): Flow<List<CityWithVisitDetails>>
+    fun getCityWithVisitDetails(key: Long): Flow<CityWithVisitDetails>
 
     @Delete
     fun deleteVisit(visit: Visit): Int

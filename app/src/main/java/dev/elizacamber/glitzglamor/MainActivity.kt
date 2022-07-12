@@ -22,7 +22,6 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import dev.elizacamber.glitzglamor.database.dummyCityList
 import dev.elizacamber.glitzglamor.ui.theme.GlitzGlamorTheme
 
 
@@ -51,19 +50,16 @@ class MainActivity : ComponentActivity() {
                         }
                     ) {
                         AnimatedNavHost(navController = navController, startDestination = "list") {
-                            composable("list") { VisitedCitiesList(dummyCityList, navController) }
+                            composable("list") { VisitedCitiesList(navController) }
                             composable(
-                                "details/{country}/{cityName}",
-                                arguments = listOf(navArgument("country") {
-                                    type = NavType.StringType
-                                }, navArgument("cityName") {
-                                    type = NavType.StringType
+                                "details/{cityId}",
+                                arguments = listOf(navArgument("cityId") {
+                                    type = NavType.LongType
                                 })
                             ) { backStackEntry ->
                                 VisitedCityDetails(
                                     navController,
-                                    backStackEntry.arguments?.getString("country"),
-                                    backStackEntry.arguments?.getString("cityName")
+                                    backStackEntry.arguments?.getLong("cityId")
                                 )
                             }
                             composable(
@@ -93,6 +89,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     GlitzGlamorTheme {
-        VisitedCitiesList(dummyCityList, rememberNavController())
+        VisitedCitiesList(rememberNavController())
     }
 }

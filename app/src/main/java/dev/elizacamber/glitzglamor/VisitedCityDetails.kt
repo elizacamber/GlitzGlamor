@@ -18,8 +18,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 
 enum class DetailsFABState {
@@ -30,40 +30,62 @@ enum class DetailsFABState {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VisitedCityDetails(navController: NavHostController, country: String?, city: String?) {
-    requireNotNull(country)
-    requireNotNull(city)
+fun VisitedCityDetails(
+    navController: NavHostController,
+    cityId: Long?,
+    viewModel: CityDetailsViewModel = viewModel()
+) {
+    requireNotNull(cityId)
+    LaunchedEffect(Unit) {
+        viewModel.cityFlow(cityId)
+    }
 
     var fabState by remember { mutableStateOf(DetailsFABState.Edit) }
+    val uiState by viewModel.uiState.collectAsState()
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                fabState =
-                    if (fabState == DetailsFABState.Edit) DetailsFABState.Done else DetailsFABState.Edit
-            }) {
-                Icon(
-                    if (fabState == DetailsFABState.Done) Icons.Default.Edit else Icons.Default.Done,
-                    "Edit city details"
-                )
-            }
-        }
-    ) {
-        Column(Modifier.fillMaxSize()) {
-            DetailsBanner(country = country, city = city)
-            Spacer(modifier = Modifier.height(16.dp))
-            Column(Modifier.padding(16.dp)) {
-                Text(text = "Times visited: 2")
-                Text(text = "Number of total days: 170")
-                Text(text = "Last day visited: 27/05/2022")
-                //Text(text = "Trips: 1. 10/09/2021 - 19/09/2021 2. 04/01/2022 - 27/05/2022")
+    if (uiState.isLoading) {
+        LoadingScreen()
+    } else {
+        when (uiState) {
+            is CityDetailsUiState.CityError -> TODO()
+            is CityDetailsUiState.CitySuccess -> {
+                Scaffold(
+                    floatingActionButton = {
+                        FloatingActionButton(onClick = {
+                            fabState =
+                                if (fabState == DetailsFABState.Edit) DetailsFABState.Done else DetailsFABState.Edit
+                        }) {
+                            Icon(
+                                if (fabState == DetailsFABState.Done) Icons.Default.Edit else Icons.Default.Done,
+                                "Edit city details"
+                            )
+                        }
+                    }
+                ) {
+                    val city = uiState.city!!
+                    Column(Modifier.fillMaxSize()) {
+                        DetailsBanner(flag = city.city.flagRes, city = city.city.name)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Column(Modifier.padding(16.dp)) {
+                            Text(text = "Times visited: ${city.visits.size}")
+                            Text(text = "Number of total days: 170")
+                            Text(text = "Last day visited: 27/05/2022")
+                            //Text(text = "Trips: 1. 10/09/2021 - 19/09/2021 2. 04/01/2022 - 27/05/2022")
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun DetailsBanner(country: String, city: String) {
+fun LoadingScreen() {
+    Text(text = "Loading...")
+}
+
+@Composable
+fun DetailsBanner(flag: Int, city: String) {
     val visible = remember { mutableStateOf(false) }
     val density = LocalDensity.current
 
@@ -79,15 +101,13 @@ fun DetailsBanner(country: String, city: String) {
             .clickable { visible.value = !visible.value },
         contentAlignment = Alignment.Center
     ) {
-        if (getFlagForCountry(country) != null) {
-            Image(
-                painter = painterResource(id = getFlagForCountry(country)!!),
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.FillWidth,
-                contentDescription = "",
-                alpha = 0.1f
-            )
-        }
+        Image(
+            painter = painterResource(id = flag),
+            modifier = Modifier.fillMaxWidth(),
+            contentScale = ContentScale.FillWidth,
+            contentDescription = "",
+            alpha = 0.1f
+        )
         AnimatedVisibility(
             visible = visible.value,
             enter = slideInHorizontally {
@@ -113,6 +133,6 @@ fun DetailsBanner(country: String, city: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun VisitedCityDetailsPreview() {
-    VisitedCityDetails(rememberNavController(), "United States of America", "Chicago")
+fun DetailsBannerPreview() {
+    DetailsBanner(R.drawable.us, "Chicago")
 }

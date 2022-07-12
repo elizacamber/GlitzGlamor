@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.elizacamber.glitzglamor.database.City
+import dev.elizacamber.glitzglamor.data.City
 import dev.elizacamber.glitzglamor.ui.theme.GlitzGlamorTheme
 
 @Composable
@@ -36,7 +36,7 @@ fun VisitedCitiesItem(city: City, onClick: (() -> Unit)) {
             .padding(8.dp, 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FlagIcon(res = getFlagForCountry(city.country))
+        FlagIcon(res = city.flagRes)
         Spacer(Modifier.width(8.dp))
         Column {
             Text(text = city.name)
@@ -49,7 +49,7 @@ fun VisitedCitiesItem(city: City, onClick: (() -> Unit)) {
 fun FlagIcon(res: Int?) {
     Image(
         painter = painterResource(
-            id = res ?: R.drawable.ic_launcher_background
+            id = R.drawable.us
         ),
         contentDescription = "flag",
         contentScale = ContentScale.Crop,
@@ -71,6 +71,8 @@ fun TimesVisitedText(visits: Int) {
 @Composable
 fun ItemPreview() {
     GlitzGlamorTheme {
-        VisitedCitiesItem(City(0, "Chicago", "United States of America", 1), onClick = {})
+        VisitedCitiesItem(
+            City(0, "Chicago", "United States of America", R.drawable.us, 1),
+            onClick = {})
     }
 }

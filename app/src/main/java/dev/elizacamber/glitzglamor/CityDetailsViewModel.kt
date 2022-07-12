@@ -1,27 +1,65 @@
 package dev.elizacamber.glitzglamor
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import dev.elizacamber.glitzglamor.database.CitiesDao
+import androidx.lifecycle.viewModelScope
+import dev.elizacamber.glitzglamor.data.CityWithVisitDetails
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
-class CityDetailsViewModel(private val citiesDao: CitiesDao) : ViewModel() {
+sealed interface CityDetailsUiState {
+    val isLoading: Boolean
+    val city: CityWithVisitDetails?
 
-//    fun cities(): Flow<List<City>> = citiesDao.getAllCities()
+    data class CityError(
+        override val isLoading: Boolean,
+        override val city: CityWithVisitDetails?
+    ) : CityDetailsUiState
 
-//    fun insertCity(city: City) {
-//        viewModelScope.launch {
-//            citiesDao.insert(city)
-//        }
-//    }
+    data class CitySuccess(
+        override val isLoading: Boolean,
+        override var city: CityWithVisitDetails
+    ) : CityDetailsUiState
 }
 
-class CityDetailsViewModelFactory(private val citiesDao: CitiesDao) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        super.create(modelClass)
-        if (modelClass.isAssignableFrom(CityDetailsViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return CityDetailsViewModel(citiesDao) as T
+data class CityDetailsViewModelState(
+    val city: CityWithVisitDetails? = null,
+    val isLoading: Boolean = false,
+) {
+    fun toUiState(): CityDetailsUiState =
+        when (city) {
+            null -> CityDetailsUiState.CityError(
+                isLoading = isLoading,
+                city = null,
+            )
+            else -> CityDetailsUiState.CitySuccess(
+                isLoading = false,
+                city = city
+            )
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+}
+
+class CityDetailsViewModel : ViewModel() {
+    private val dao = Holder.database.citiesDao
+    private val viewModelState = MutableStateFlow(CityDetailsViewModelState())
+
+    init {
+        viewModelState.update {
+            it.copy(city = null, isLoading = true)
+        }
+    }
+
+    // UI state exposed to the UI
+    val uiState = viewModelState
+        .map { it.toUiState() }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            viewModelState.value.toUiState()
+        )
+
+    fun cityFlow(id: Long) = viewModelScope.launch {
+        dao.getCityWithVisitDetails(id).collect { city ->
+            viewModelState.update { it.copy(city = city, isLoading = false) }
+        }
     }
 }

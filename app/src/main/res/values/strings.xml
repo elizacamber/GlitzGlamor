@@ -2,4 +2,5 @@
     <string name="app_name">Glitz&amp;Glamor</string>
     <string name="app_title">Visited\ncities</string>
     <string name="title_times_visited">Times visited: %d</string>
+    <string name="error_generic">Something went wrong. Please try later</string>
 </resources>

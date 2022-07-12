@@ -1,4 +1,4 @@
-package dev.elizacamber.glitzglamor.database
+package dev.elizacamber.glitzglamor.data
 
 import android.content.Context
 import androidx.room.Database
