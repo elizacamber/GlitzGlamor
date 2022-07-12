@@ -93,7 +93,6 @@ fun DetailsBanner(flag: Int, city: String) {
         delay(500)
         visible.value = true
     }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
