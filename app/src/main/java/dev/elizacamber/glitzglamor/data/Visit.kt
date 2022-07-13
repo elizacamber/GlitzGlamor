@@ -23,6 +23,10 @@ data class NewVisit(
     val end_date: Long?,
 )
 
+val NewVisitListComparator = Comparator<NewVisit> { left, right ->
+    left.start_date!!.compareTo(right.start_date!!)
+}
+
 val dummyVisitsList = listOf(
     Visit(0, 1, 1658188800000, 1661385600000),
     Visit(1, 2, 1631318400000, 1632009600000),

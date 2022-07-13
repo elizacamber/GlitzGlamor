@@ -1,12 +1,13 @@
 package dev.elizacamber.glitzglamor
 
 import android.app.DatePickerDialog
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -24,6 +25,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import dev.elizacamber.glitzglamor.data.NewVisit
+import dev.elizacamber.glitzglamor.data.NewVisitListComparator
 import dev.elizacamber.glitzglamor.data.epochToReadableDate
 import dev.elizacamber.glitzglamor.data.getCountryList
 import java.util.*
@@ -40,7 +42,9 @@ fun AddNew(navController: NavController) {
         OutlinedTextField(
             value = cityName,
             onValueChange = { cityName = it },
-            label = { Text(text = "Name") })
+            label = { Text(text = "Name") },
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
         Spacer(modifier = Modifier.height(16.dp))
         CountryPicker()
         Spacer(modifier = Modifier.height(32.dp))
@@ -77,7 +81,9 @@ fun CountryPicker() {
     OutlinedTextField(
         value = selectedCountry?.name ?: "Select country",
         onValueChange = {},
-        Modifier.clickable { expanded = !expanded },
+        Modifier
+            .padding(horizontal = 16.dp)
+            .clickable { expanded = !expanded },
         readOnly = true,
         enabled = false,
         colors = TextFieldDefaults.textFieldColors(
@@ -126,9 +132,11 @@ fun VisitsTitle() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VisitsContainer(visits: MutableList<NewVisit>) {
     var visit by remember { mutableStateOf<NewVisit?>(null) }
+    val comparator by remember { mutableStateOf(NewVisitListComparator) }
     val now = Calendar.getInstance()
 
     val startDatePicker = DatePickerDialog(
@@ -152,11 +160,24 @@ fun VisitsContainer(visits: MutableList<NewVisit>) {
         now[Calendar.YEAR], now[Calendar.MONTH], now[Calendar.DAY_OF_MONTH]
     )
 
-    Column {
-        if (visits.isNotEmpty()) {
-            visits.forEachIndexed { index, visit ->
-                NewVisitRow(visit = visit, index = index) {
-                    visits.removeAt(index)
+    Column(Modifier.verticalScroll(rememberScrollState())) {
+        LazyColumn(Modifier.height(220.dp)) {
+            if (visits.isNotEmpty()) {
+                val visitsSorted = visits.sortedWith(comparator)
+                itemsIndexed(visitsSorted, key = { _, item -> item.start_date!! }) { index, visit ->
+                    NewVisitRow(
+                        visit = visit, index = index, modifier = Modifier
+                            .animateItemPlacement(
+                                animationSpec = tween(
+                                    durationMillis = 1000,
+                                    easing = LinearOutSlowInEasing,
+                                )
+                            )
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 16.dp)
+                    ) {
+                        visits.remove(visit)
+                    }
                 }
             }
         }
@@ -168,12 +189,12 @@ fun VisitsContainer(visits: MutableList<NewVisit>) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Start date: ${visit?.start_date?.epochToReadableDate() ?: ""}",
+                text = "Start date: ${visit?.start_date?.epochToReadableDate() ?: " \u2014 "}",
                 Modifier.clickable {
                     startDatePicker.show()
                 })
             Text(
-                text = "End date: ${visit?.end_date?.epochToReadableDate() ?: ""}",
+                text = "End date: ${visit?.end_date?.epochToReadableDate() ?: " \u2014 "}",
                 Modifier.clickable {
                     endDatePicker.show()
                 })
@@ -197,28 +218,25 @@ fun VisitsContainer(visits: MutableList<NewVisit>) {
 }
 
 @Composable
-fun NewVisitRow(visit: NewVisit, index: Int, onClick: () -> Unit) {
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "${index + 1}. ${visit.start_date!!.epochToReadableDate()} - ${visit.end_date!!.epochToReadableDate()}"
-            )
-            IconButton(onClick = { onClick.invoke() }) {
-                Icon(Icons.Default.Delete, "Delete row")
+fun NewVisitRow(visit: NewVisit, index: Int, modifier: Modifier, onClick: () -> Unit) {
+    Box(modifier = modifier) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = "${index + 1}. ${visit.start_date!!.epochToReadableDate()} - ${visit.end_date!!.epochToReadableDate()}"
+                )
+                IconButton(onClick = { onClick.invoke() }) {
+                    Icon(Icons.Default.Delete, "Delete row")
+                }
             }
+            Divider(
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .width(0.5.dp)
+            )
         }
-        Divider(
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier
-                .fillMaxWidth()
-                .width(0.5.dp)
-        )
     }
 }
 
