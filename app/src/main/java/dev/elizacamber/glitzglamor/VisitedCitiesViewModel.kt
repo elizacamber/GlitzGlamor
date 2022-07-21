@@ -11,7 +11,7 @@ sealed interface CitiesUiState {
     val isLoading: Boolean
     val cities: List<City>
 
-    data class CitiesError(
+    data class CitiesEmpty(
         override val isLoading: Boolean,
         override val cities: List<City> = listOf()
     ) : CitiesUiState
@@ -27,8 +27,8 @@ data class CitiesViewModelState(
     val isLoading: Boolean = false,
 ) {
     fun toUiState(): CitiesUiState =
-        when (cities) {
-            null -> CitiesUiState.CitiesError(
+        when {
+            cities.isNullOrEmpty() -> CitiesUiState.CitiesEmpty(
                 isLoading = isLoading
             )
             else -> CitiesUiState.CitiesSuccess(
