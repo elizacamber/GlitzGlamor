@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.elizacamber.glitzglamor.data.City
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -66,6 +67,7 @@ class VisitedCitiesViewModel() : ViewModel() {
         )
 
     fun cities() = viewModelScope.launch {
+        delay(5000L) // mock loading delay
         dao.getAllCities().collect { cities ->
             Log.d("VisitedCitiesViewModel.kt", "cities: $cities")
             viewModelState.update { it.copy(cities = cities, isLoading = false) }

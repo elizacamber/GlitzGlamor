@@ -29,7 +29,7 @@ fun VisitedCitiesList(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     if (uiState.isLoading) {
-        LoadingScreen()
+        LoadingListScreen()
     } else {
         when (uiState) {
             is CitiesUiState.CitiesEmpty -> EmptyCitiesScreen()
@@ -47,6 +47,21 @@ fun VisitedCitiesList(
             }
         }
     }
+}
+
+@Composable
+fun LoadingListScreen() {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Title(stringResource(id = R.string.app_title))
+        LazyColumn() {
+            repeat(5) {
+                item {
+                    LoadingVisitedCitiesItem()
+                }
+            }
+        }
+    }
+
 }
 
 @Composable
