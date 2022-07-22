@@ -49,7 +49,7 @@ fun VisitedCitiesItem(city: City, onClick: (() -> Unit)) {
 fun FlagIcon(res: Int?) {
     Image(
         painter = painterResource(
-            id = R.drawable.us
+            id = res ?: R.drawable.us
         ),
         contentDescription = "flag",
         contentScale = ContentScale.Crop,
