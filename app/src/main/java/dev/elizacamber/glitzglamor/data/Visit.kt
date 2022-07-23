@@ -50,3 +50,23 @@ fun Long.epochToReadableDate(): String {
     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     return sdf.format(this)
 }
+
+fun Visit.getYear(): String {
+    val sdf = SimpleDateFormat("yyyy", Locale.getDefault())
+    return sdf.format(this.start_date)
+}
+
+fun List<Visit>.getLastVisit(): String {
+    return this.maxByOrNull { it.end_date }!!.end_date.epochToReadableDate()
+}
+
+fun List<Visit>.getTotalDays(): Int {
+    var days = 0L
+    val millisInADay = 86400000
+    this.forEach { days += it.end_date - it.start_date }
+    return (days / millisInADay).toInt()
+}
+
+fun List<Visit>.groupByYear(): Collection<List<Visit>> {
+    return this.groupBy { it.getYear() }.values
+}

@@ -1,6 +1,5 @@
 package dev.elizacamber.glitzglamor
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.elizacamber.glitzglamor.data.City
@@ -67,9 +66,8 @@ class VisitedCitiesViewModel() : ViewModel() {
         )
 
     fun cities() = viewModelScope.launch {
-        delay(5000L) // mock loading delay
+        delay(1000L) // mock loading delay
         dao.getAllCities().collect { cities ->
-            Log.d("VisitedCitiesViewModel.kt", "cities: $cities")
             viewModelState.update { it.copy(cities = cities, isLoading = false) }
         }
     }
