@@ -94,6 +94,9 @@ fun DetailsCard(city: CityWithVisitDetails) {
         shape = RoundedCornerShape(16.dp),
     ) {
         Column() {
+//            Crossfade(targetState = expanded, animationSpec = tween(3000)) { targetExpanded ->
+//                CardContent(city = city, expanded = targetExpanded)
+//            }
             transition.AnimatedContent(transitionSpec = fadeThrough()) { targetExpanded ->
                 CardContent(city = city, expanded = targetExpanded)
             }
