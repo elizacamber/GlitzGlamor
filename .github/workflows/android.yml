@@ -29,9 +29,9 @@ jobs:
         gradle-home-cache-cleanup: true
 
     -  name: Bump Version Code
-       uses: chkfung/android-version-actions@v1.2.1
+       uses: chkfung/android-version-actions@v1.2.2
        with:
-         gradlePath: app/build.gradle.kts
+         gradlePath: app/build.gradle
          versionCode: ${{ github.run_number }}
          versionName: 1.0.0
     
