@@ -42,7 +42,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-bundle
-        path: app/build/outputs/bundle/release/app-release.aab
+        path: app/build/outputs/bundle/debug/app-debug.aab
     
     - run: 'echo Build status report=${{ job.status }}'
 
